@@ -4,10 +4,10 @@ import { env } from "node:process";
 const server = createServer()
 server.on("error", (e) => console.error("Server error: ", e))
 type Method = "POST" | "CONNECT" | "PATCH" | "DELETE" | "GET" | string;
-let PORT: number = 80;
+let PORT: number = 8080;
 const HOST = "127.0.0.1";
 ;(() => {
-    let port = typeof env.PORT == "undefined" ? 80 : parseInt(env.PORT, 10);
+    let port = typeof env.PORT == "undefined" ? PORT : parseInt(env.PORT, 10);
     if (isNaN(port)) return;
     PORT = port;
 })();
