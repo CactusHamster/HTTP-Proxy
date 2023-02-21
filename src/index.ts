@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-import { createConnection, NetConnectOpts, Socket, createServer } from "node:net";
+import { createConnection, NetConnectOpts, Socket, createServer as createNetServer } from "node:net";
 import { env } from "node:process";
-const server = createServer()
+const server = createNetServer()
 server.on("error", (e) => console.error("Server error: ", e))
 type Method = "POST" | "CONNECT" | "PATCH" | "DELETE" | "GET" | string;
 let PORT: number = 8080;
