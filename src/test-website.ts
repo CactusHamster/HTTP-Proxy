@@ -21,6 +21,7 @@ class Server {
         [this.http, this.https].forEach((server) => {
             server.on("upgrade", (req, socket) => {
                 socket.on("data", (d) => console.log(Array.from(d).map((c) => "0x" + (c as number).toString(16))))
+		socket.on("error", (e) => console.error("Socket error: ", e))
                 console.log("a client is requesting we use websockets")
                 if (req.headers["upgrade"] !== "websocket" || !req.headers["sec-websocket-key"]) {
                     console.log("received a bad request")
