@@ -1,9 +1,17 @@
 #!/usr/bin/env node
 import { createConnection, NetConnectOpts, Socket, createServer } from "node:net";
+import { env } from "node:process";
 const server = createServer()
 server.on("error", (e) => console.error("Server error: ", e))
 type Method = "POST" | "CONNECT" | "PATCH" | "DELETE" | "GET" | string;
-const listener = server.listen(8080, "127.0.0.1")
+let PORT: number = 80;
+;(() => {
+    let port = typeof env.PORT == "undefined" ? 80 : parseInt(env.PORT, 10);
+    if (isNaN(port)) return;
+    PORT = port;
+})();
+
+const listener = server.listen(PORT, "127.0.0.1")
 listener.on("listening", () => {
     let address = listener.address();
     if (!address) address = "NULL";
