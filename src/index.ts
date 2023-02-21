@@ -53,6 +53,7 @@ function parseHeaders (packet: string | Buffer): { method: Method; uri: string; 
 
 function parseURI (uri: string): { port: number, host: string } {
     let ci = uri.indexOf(":")
+    if (ci === -1) return { port: NaN, host: uri }
     let host = uri.slice(0, ci)
     let port: number | null = parseInt(uri.slice(ci + 1), 10)
     return { host, port }
