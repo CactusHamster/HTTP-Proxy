@@ -1,0 +1,5 @@
+node_modules
+dist/
+localhost.crt
+localhost.key
+pnpm-lock.yaml
