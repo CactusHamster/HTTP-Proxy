@@ -9,16 +9,16 @@ const HOST = "127.0.0.1";
 ;(() => {
     let port = typeof env.PORT == "undefined" ? PORT : parseInt(env.PORT, 10);
     if (isNaN(port)) return;
+    console.log(`Using port ${port} from env.`)
     PORT = port;
 })();
 
-console.log(`Trying to listen on ${HOST}:${PORT}`)
 const listener = server.listen(PORT, HOST)
 listener.on("listening", () => {
     let address = listener.address();
     if (!address) address = "NULL";
     if (!(typeof address == "string")) address = `${address.address}:${address.port}`
-    console.log(`Server listening on ${address}.`);
+    console.log(`Server listening on ${address}`);
 });
 
 async function createConnectionAsync (options: NetConnectOpts): Promise<Socket> {
