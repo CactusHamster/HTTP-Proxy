@@ -68,6 +68,8 @@ async function onFirstPacket (socket: Socket, packet: Buffer) {
     console.log(packet.toString() + "*".repeat(50) + "\n".repeat(5))
     let host: string, port: number, keepAlive: boolean;
     let { method, uri, headers } = parseHeaders(packet)
+    // handle if it's an actual not-proxy request
+    if (uri.startsWith("/")) return socket.end("HTTP/1.1 200 HELLO\r\n\nmlem")
     let isTLS = method === "CONNECT"
     if (isTLS) {
         let t = parseURI(uri);
@@ -79,7 +81,8 @@ async function onFirstPacket (socket: Socket, packet: Buffer) {
         port = isNaN(t.port) ? 80 : t.port;
         host = t.host
     }
-    if (host === HOST && port === PORT) return socket.end("HTTP/1.1 500 EVIL\r\n\n")
+    // kinda help with self-requesting
+    if (host === HOST && port === PORT) return (console.log("evil"), socket.end("HTTP/1.1 500 EVIL\r\n\n"))
     keepAlive = headers["proxy-connection"] === "keep-alive";
     let outgoingSocket = await createConnectionAsync({ host, port, keepAlive });
     if (isTLS) socket.write('HTTP/1.1 200 OK\r\n\n');
