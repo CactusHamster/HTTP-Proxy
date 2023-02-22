@@ -32,7 +32,7 @@ function parseHeaders (packet: string | Buffer): { method: Method; uri: string; 
     if (typeof packet !== "string") packet = packet.toString("utf-8");
     let endIndex = packet.indexOf("\r\n\r\n")
     if (endIndex === -1) endIndex = packet.length;
-    const lines = packet.toString().slice(0, 65535).slice(0, packet.indexOf("\r\n\r\n")).split("\r\n");
+    const lines = packet.toString().slice(0, 65535).slice(0, endIndex).split("\r\n");
     let headers: { [key: string]: string } = {};
     lines.slice(1).forEach(line => {
         let index = line.indexOf(": ");
@@ -69,14 +69,14 @@ async function onFirstPacket (socket: Socket, packet: Buffer) {
     let host: string, port: number, keepAlive: boolean;
     let { method, uri, headers } = parseHeaders(packet)
     // handle if it's an actual not-proxy request
-    if (uri.startsWith("/")) return socket.end("HTTP/1.1 200 HELLO\r\n\nmlem")
+    if (uri.startsWith("/")) return socket.end("HTTP/1.1 200 HELLO\r\n\r\nmlem")
     let isTLS = method === "CONNECT"
     if (isTLS) {
         let t = parseURI(uri);
         port = isNaN(t.port) ? 443 : t.port;
         host = t.host
     } else {
-        if (!headers["host"]) return socket.end("HTTP/1.1 400 BAD REQUEST\r\n\n")
+        if (!headers["host"]) return socket.end("HTTP/1.1 400 BAD REQUEST\r\n\r\n")
         let t = parseURI(headers["host"]);
         port = isNaN(t.port) ? 80 : t.port;
         host = t.host
@@ -85,7 +85,7 @@ async function onFirstPacket (socket: Socket, packet: Buffer) {
     if (host === HOST && port === PORT) return (console.log("evil"), socket.end("HTTP/1.1 400 EVIL\r\n\n"))
     keepAlive = headers["proxy-connection"] === "keep-alive";
     let outgoingSocket = await createConnectionAsync({ host, port, keepAlive });
-    if (isTLS) socket.write('HTTP/1.1 200 OK\r\n\n');
+    if (isTLS) socket.write('HTTP/1.1 200 OK\r\n\r\n');
     else outgoingSocket.write(packet);
     proxySocket(socket, outgoingSocket)
 }
