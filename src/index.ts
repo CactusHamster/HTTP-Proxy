@@ -79,6 +79,7 @@ async function onFirstPacket (socket: Socket, packet: Buffer) {
         port = isNaN(t.port) ? 80 : t.port;
         host = t.host
     }
+    if (host === HOST && port === PORT) return socket.end("HTTP/1.1 500 EVIL\r\n\n")
     keepAlive = headers["proxy-connection"] === "keep-alive";
     let outgoingSocket = await createConnectionAsync({ host, port, keepAlive });
     if (isTLS) socket.write('HTTP/1.1 200 OK\r\n\n');
