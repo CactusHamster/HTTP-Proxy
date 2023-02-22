@@ -76,13 +76,13 @@ async function onFirstPacket (socket: Socket, packet: Buffer) {
         port = isNaN(t.port) ? 443 : t.port;
         host = t.host
     } else {
-        if (!headers["host"]) return socket.end("HTTP/1.1 500 BAD REQUEST\r\n\n")
+        if (!headers["host"]) return socket.end("HTTP/1.1 400 BAD REQUEST\r\n\n")
         let t = parseURI(headers["host"]);
         port = isNaN(t.port) ? 80 : t.port;
         host = t.host
     }
     // kinda help with self-requesting
-    if (host === HOST && port === PORT) return (console.log("evil"), socket.end("HTTP/1.1 500 EVIL\r\n\n"))
+    if (host === HOST && port === PORT) return (console.log("evil"), socket.end("HTTP/1.1 400 EVIL\r\n\n"))
     keepAlive = headers["proxy-connection"] === "keep-alive";
     let outgoingSocket = await createConnectionAsync({ host, port, keepAlive });
     if (isTLS) socket.write('HTTP/1.1 200 OK\r\n\n');
