@@ -90,4 +90,7 @@ async function onFirstPacket (socket: Socket, packet: Buffer) {
     proxySocket(socket, outgoingSocket)
 }
 
-server.on("connection", (socket) => socket.once("data", (packet: Buffer) => onFirstPacket(socket, packet)))
+server.on("connection", (socket) => {
+    console.log("connection made with client")
+    socket.once("data", (packet: Buffer) => onFirstPacket(socket, packet))
+})
